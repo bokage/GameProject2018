@@ -26,21 +26,23 @@ import java.util.Random;
 
 public class flappybird implements ActionListener, KeyListener{
 
-	public static final int WIDTH = 1600; // edit to change window dimensions
-	public static final int HEIGHT = 900;
-	public static final int PIPESPEED = 7; // speed of pipes
-	public static final int PIPEGAP = 325; // gap between top and bottom halves of pipe
-
+	public static final int WIDTH = 1000, HEIGHT = 900, PIPESPEED = 5, PIPEGAP = 305; // edit to change window dimensions
+	// game window width, height, speed of pipes, gap between top and bottom of the pipes
+	
 	public static flappybird fb;
 
 	public Render r;
-
 	public int score = 0;
 
-	public int ticks;
-	public int movement = 0;
+	//ticks, movements, etc
+	public int ticks = 0;
+	public float velocity = 0;
 	public boolean die;
 	public boolean start = true;
+	public static final int frameTime = 10;
+
+
+
 
 	public Rectangle bird;
 	public ArrayList<Rectangle> pipe;
@@ -48,7 +50,7 @@ public class flappybird implements ActionListener, KeyListener{
 
 	public flappybird(){ // constructor
 		JFrame frame = new JFrame("Flappy Bird"); // names window
-		Timer timer = new Timer(10, this);	// refreshes render (i think)
+		Timer timer = new Timer(frameTime, this);	// refreshes render (i think)
 
 		r = new Render(); // initialize Render object. renders game graphics
 
@@ -57,7 +59,7 @@ public class flappybird implements ActionListener, KeyListener{
 		frame.setVisible(true);	// window is visible
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // shuts down program when window closes
 		frame.setSize(WIDTH, HEIGHT); // sets dimensions
-		frame.setResizable(false); // cannot change size
+		frame.setResizable(true); // cannot change size
 
 		bird = new Rectangle(WIDTH/2 - 20, HEIGHT/2 - 20, 20, 20); // creates bird
 		pipe = new ArrayList<Rectangle>();
@@ -71,18 +73,21 @@ public class flappybird implements ActionListener, KeyListener{
 	}
 
 	public void keyPressed(KeyEvent e){ // "jumps"
-		bird.y -= 150;
+		if (e.getKeyCode() == KeyEvent.VK_A) {
+	
+		}
+           
+		velocity = -7;
 	}
 
 	public void keyReleased(KeyEvent e){ // KeyListener interface method
-
 	}
 
 	public void keyTyped(KeyEvent e){ // KeyListener interface method
-
 	}
 
 	public void actionPerformed(ActionEvent a){ // necessary method from ActionListener interface
+		
 		int pipeSpeed = PIPESPEED;
 		ticks++;
 
@@ -92,9 +97,9 @@ public class flappybird implements ActionListener, KeyListener{
 				pipes.x -= pipeSpeed; // moves left by subtracting pipeSpeed from x-coord of pipe
 			}
 
-			if(ticks%7 == 0 && movement < 5){ // increases bird vertical velocity
-				movement += 1;
-			}
+			// increases bird vertical velocity
+			velocity += 0.287;
+			
 
 			for(int i = 0; i < pipe.size(); i++){
 				Rectangle pipes = pipe.get(i);
@@ -108,7 +113,8 @@ public class flappybird implements ActionListener, KeyListener{
 				}
 			}
 
-			bird.y += movement; // "moves" bird by changing vertical velocity
+			bird.y += velocity; // "moves" bird by changing vertical velocity
+			System.out.println(velocity);
 
 			for(int i = 0; i < pipe.size(); i++){
 				Rectangle pipes = pipe.get(i);
@@ -152,46 +158,69 @@ public class flappybird implements ActionListener, KeyListener{
 		g.setColor(Color.GREEN.darker().darker());
 		g.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
 
+		//g.setColor(Color.GREEN.darker().darker());
+		//g.fillRect(pipe.x-20, pipe.y-20, pipe.width+40, 40); //numbers are sizes+displacement of pipe lip
+
 	}
 
 	public void repaint(Graphics g){ // paints background: sky-blue, ground-orange, grass-green, bird-red
 
-		g.setColor(Color.CYAN.darker()); // sky
+		g.setColor(new Color(81, 192, 201)); // sky
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 
-		/*
-		g.setColor(Color.ORANGE); // ground
+		// GRASS
+		g.setColor(Color.GREEN); 
 		g.fillRect(0, HEIGHT-120, WIDTH, 120);
-		*/
+		g.setColor(new Color(223, 216, 148));//paints ground
+		g.fillRect(0, HEIGHT - 80, WIDTH, 80);
 
-		g.setColor(Color.GREEN); // grass
-		g.fillRect(0, HEIGHT-120, WIDTH, 120);
+		// BIRD
+		g.setColor(new Color(227, 190, 66)); 
+		g.fillOval(bird.x, bird.y, 45, 45); //numbers = bird size
+		g.setColor(Color.WHITE); //paints eyes
+		g.fillOval(bird.x+26, bird.y+4, 18, 18);
+		g.setColor(new Color(255, 255, 224));//paints wings
+		g.fillOval(bird.x-5, bird.y + 10, 30, 20);
+		g.setColor(new Color(255,69,0)); //paints beak
+		g.fillRect(bird.x+30, bird.y+25, 20, 12); 
+		g.setColor(Color.BLACK); //paints pupil
+		g.fillOval(bird.x+36, bird.y+10, 6, 8);
+		g.fillRect(bird.x+30, bird.y+30, 20, 2);
 
-		g.setColor(Color.RED); // bird
-		g.fillRect(bird.x, bird.y, bird.width, bird.height);
 
-		for(int i = 0; i < pipe.size(); i++){ // paints pipes by calling paintPipe method
+		// paints pipes by calling paintPipe method
+		for(int i = 0; i < pipe.size(); i++){ 
 			Rectangle pipes = pipe.get(i);
 			paintPipe(g, pipes);
 		}
 
-		g.setColor(Color.RED.darker());
+		g.setColor(Color.WHITE);
 		g.setFont(new Font("Monotype Corsiva", Font.PLAIN, 120)); // start and death font type and size
 
 		if(!die){ // comment out for now 5/11/18
 			//g.drawString("PRESS TO START GAME", 100, 300);
 		}
 		else{
-			g.drawString("YOU DIED!", WIDTH/3 - 50, HEIGHT/2 - 20);
+			g.setColor(Color.WHITE); //death screen border
+			g.fillRect(18* WIDTH/100 -20, HEIGHT/5 +40, 640, 280);
+
+			g.setColor(new Color(223, 216, 148)); //death screen background
+			g.fillRect(18* WIDTH/100 -10, HEIGHT/5 +50, 620, 260);
+			
+			g.setColor(Color.WHITE); //death text
+			g.drawString("YOU DIED!", 18* WIDTH/100, 2* HEIGHT/5);
+			g.setFont(new Font("Monaco", Font.PLAIN, 60));
+			g.drawString("Score: " + Integer.toString(score/6), 32* WIDTH/100, 3*HEIGHT/6);
+
 		}
 
-		g.setColor(Color.RED);
-		g.setFont(new Font("Comic Sans MS", Font.PLAIN, 60));
-		g.drawString("Score: " + Integer.toString(score/2), 10, 60); // score/2 because the counter increases by 2 for some reason...
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("Monaco", Font.PLAIN, 30));
+		g.drawString("Score: " + Integer.toString(score/6), 10, 30); // score/2 because the counter increases by 2 for some reason...
 
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Sans Serif", Font.PLAIN, 20));
-		g.drawString("CLOSED ALPHA VERSION", 1335, 25); // closed alpha tag lol
+		g.drawString("CLOSED ALPHA VERSION", 75 * WIDTH / 100, HEIGHT/20); // closed alpha tag lol
 	}
 
 	public static void main(String[] args){
