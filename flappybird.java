@@ -23,6 +23,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
+import javax.imageio.ImageIO;
 
 public class flappybird implements ActionListener, KeyListener{
 
@@ -30,6 +31,8 @@ public class flappybird implements ActionListener, KeyListener{
 	// game window width, height, speed of pipes, gap between top and bottom of the pipes
 	
 	public static flappybird fb;
+
+	public Image img = null;
 
 	public Render r;
 	public int score = 0;
@@ -114,7 +117,6 @@ public class flappybird implements ActionListener, KeyListener{
 			}
 
 			bird.y += velocity; // "moves" bird by changing vertical velocity
-			System.out.println(velocity);
 
 			for(int i = 0; i < pipe.size(); i++){
 				Rectangle pipes = pipe.get(i);
@@ -175,18 +177,13 @@ public class flappybird implements ActionListener, KeyListener{
 		g.fillRect(0, HEIGHT - 80, WIDTH, 80);
 
 		// BIRD
-		g.setColor(new Color(227, 190, 66)); 
-		g.fillOval(bird.x, bird.y, 45, 45); //numbers = bird size
-		g.setColor(Color.WHITE); //paints eyes
-		g.fillOval(bird.x+26, bird.y+4, 18, 18);
-		g.setColor(new Color(255, 255, 224));//paints wings
-		g.fillOval(bird.x-5, bird.y + 10, 30, 20);
-		g.setColor(new Color(255,69,0)); //paints beak
-		g.fillRect(bird.x+30, bird.y+25, 20, 12); 
-		g.setColor(Color.BLACK); //paints pupil
-		g.fillOval(bird.x+36, bird.y+10, 6, 8);
-		g.fillRect(bird.x+30, bird.y+30, 20, 2);
-
+		try {
+    		img = ImageIO.read(new File("tyler.png"));
+		} 
+		catch (IOException e) {
+			
+		}
+		g.drawImage(img, bird.x, bird.y, null);
 
 		// paints pipes by calling paintPipe method
 		for(int i = 0; i < pipe.size(); i++){ 
@@ -218,9 +215,6 @@ public class flappybird implements ActionListener, KeyListener{
 		g.setFont(new Font("Monaco", Font.PLAIN, 30));
 		g.drawString("Score: " + Integer.toString(score/6), 10, 30); // score/2 because the counter increases by 2 for some reason...
 
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("Sans Serif", Font.PLAIN, 20));
-		g.drawString("CLOSED ALPHA VERSION", 75 * WIDTH / 100, HEIGHT/20); // closed alpha tag lol
 	}
 
 	public static void main(String[] args){
