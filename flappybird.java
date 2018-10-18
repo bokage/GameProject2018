@@ -6,16 +6,9 @@
 *
 */
 
-/*TODO:
-*
-*-Fix bug where score counter increases by 2 occasionally
-*-Press button to start game > game is frozen in beginning
-*-Press button to restart game
-*-Make bird jumps 'smoother'
-*-Make Score counter stay on screen with a High Score counter
-*
+/*
+	DX highscore - 92
 */
-
 
 import java.io.*;
 import java.awt.*;
@@ -36,15 +29,16 @@ public class flappybird implements ActionListener, KeyListener{
 
 	public Render r;
 	public int score = 0;
+	public int highScore = 0;
 
 	//ticks, movements, etc
 	public int ticks = 0;
 	public float velocity = 0;
 	public boolean die;
-	public boolean start = true;
+	public boolean start;
 	public static final int frameTime = 10;
 
-
+	public boolean inverse;
 
 
 	public Rectangle bird;
@@ -52,7 +46,7 @@ public class flappybird implements ActionListener, KeyListener{
 
 
 	public flappybird(){ // constructor
-		JFrame frame = new JFrame("Flappy Bird"); // names window
+		JFrame frame = new JFrame("APCS: A Journey"); // names window
 		Timer timer = new Timer(frameTime, this);	// refreshes render (i think)
 
 		r = new Render(); // initialize Render object. renders game graphics
@@ -64,7 +58,7 @@ public class flappybird implements ActionListener, KeyListener{
 		frame.setSize(WIDTH, HEIGHT); // sets dimensions
 		frame.setResizable(true); // cannot change size
 
-		bird = new Rectangle(WIDTH/2 - 20, HEIGHT/2 - 20, 20, 20); // creates bird
+		bird = new Rectangle(WIDTH/2 - 20, HEIGHT/2 - 20, 42, 58); // creates bird
 		pipe = new ArrayList<Rectangle>();
 
 		addPipe(true);
@@ -75,12 +69,37 @@ public class flappybird implements ActionListener, KeyListener{
 		timer.start();
 	}
 
-	public void keyPressed(KeyEvent e){ // "jumps"
-		if (e.getKeyCode() == KeyEvent.VK_A) {
-	
-		}
-           
-		velocity = -7;
+	public void keyPressed(KeyEvent e){ // press key to jump
+		if(e.getKeyCode()==KeyEvent.VK_SPACE){ // only spacebar works
+			if(die){ // restarts game if die
+				bird = new Rectangle(WIDTH/2 - 20, HEIGHT/2 - 20, 42, 58); 
+				pipe = new ArrayList<Rectangle>();
+
+				addPipe(true);
+				addPipe(true);
+				addPipe(true);
+				addPipe(true);
+
+				score = 0;
+
+				die = false;
+				start = false;
+				inverse = false;
+
+			}
+
+			if(!start){
+				start = true;
+			}
+
+			if(inverse){
+				velocity = 7;
+			}
+			else{
+				velocity = -7;
+			}
+	    }
+		
 	}
 
 	public void keyReleased(KeyEvent e){ // KeyListener interface method
@@ -101,7 +120,12 @@ public class flappybird implements ActionListener, KeyListener{
 			}
 
 			// increases bird vertical velocity
-			velocity += 0.287;
+			if(inverse){
+				velocity -= 0.287; // inverse changes gravity
+			}
+			else{
+				velocity += 0.287;
+			}
 			
 
 			for(int i = 0; i < pipe.size(); i++){
@@ -123,6 +147,23 @@ public class flappybird implements ActionListener, KeyListener{
 
 				if(bird.x > pipes.x + pipes.width/2 - 10 && bird.x < pipes.x + pipes.width/2 + 10){ // increase score if pass through middle of pipe
 					score++;
+					if(score > highScore){
+						highScore = score;
+					}
+
+					// SATANIC MODE (inverse mode)
+					if(score/6 >= 5 && score/6 <= 10){
+						inverse = true;
+					}
+					else if(score/6 >= 25 && score/6 <= 40){
+						inverse = true;
+					}
+					else if (score/6 >= 100 && score/6 <= 125){
+						inverse = true;
+					}				
+					else{
+						inverse = false;
+					}
 				}
 
 				if(pipes.intersects(bird)){ // if bird hits pipe, you die!
@@ -152,47 +193,86 @@ public class flappybird implements ActionListener, KeyListener{
 			pipe.add(new Rectangle(pipe.get(pipe.size()-1).x, 0, width, HEIGHT - height - space));
 		}
 
-
 	}
 
 	public void paintPipe(Graphics g, Rectangle pipe){ // paints pipes dark green
-
-		g.setColor(Color.GREEN.darker().darker());
-		g.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
-
-		//g.setColor(Color.GREEN.darker().darker());
-		//g.fillRect(pipe.x-20, pipe.y-20, pipe.width+40, 40); //numbers are sizes+displacement of pipe lip
+		if(inverse){ // satanic mode !!
+			g.setColor(Color.RED.darker().darker());
+			g.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
+		}
+		else{
+			g.setColor(Color.GREEN.darker().darker());
+			g.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
+		}
 
 	}
 
 	public void repaint(Graphics g){ // paints background: sky-blue, ground-orange, grass-green, bird-red
+		if(inverse){ // satanic mode
+			g.setColor(new Color(201, 113, 81)); // sky
+			g.fillRect(0, 0, WIDTH, HEIGHT);
 
-		g.setColor(new Color(81, 192, 201)); // sky
-		g.fillRect(0, 0, WIDTH, HEIGHT);
+			// GRASS
+			g.setColor(Color.RED); 
+			g.fillRect(0, HEIGHT-120, WIDTH, 120);
+			g.setColor(new Color(209, 148, 223));//paints ground
+			g.fillRect(0, HEIGHT - 80, WIDTH, 80);
 
-		// GRASS
-		g.setColor(Color.GREEN); 
-		g.fillRect(0, HEIGHT-120, WIDTH, 120);
-		g.setColor(new Color(223, 216, 148));//paints ground
-		g.fillRect(0, HEIGHT - 80, WIDTH, 80);
 
-		// BIRD
-		try {
-    		img = ImageIO.read(new File("tyler.png"));
-		} 
-		catch (IOException e) {
-			
+			g.drawImage(img, bird.x, bird.y, null);
+
+			// paints pipes by calling paintPipe method
+			for(int i = 0; i < pipe.size(); i++){ 
+				Rectangle pipes = pipe.get(i);
+				paintPipe(g, pipes);
+			}
+
+			// BIRD
+			try { //KUMAR BIRD
+	    		img = ImageIO.read(new File("kumz.png"));
+			} 
+			catch (IOException e) {
+				
+			}
+			g.drawImage(img, bird.x, bird.y, null);
+
 		}
-		g.drawImage(img, bird.x, bird.y, null);
+		else{
+			g.setColor(new Color(81, 192, 201)); // sky
+			g.fillRect(0, 0, WIDTH, HEIGHT);
 
-		// paints pipes by calling paintPipe method
-		for(int i = 0; i < pipe.size(); i++){ 
-			Rectangle pipes = pipe.get(i);
-			paintPipe(g, pipes);
+			// GRASS
+			g.setColor(Color.GREEN); 
+			g.fillRect(0, HEIGHT-120, WIDTH, 120);
+			g.setColor(new Color(223, 216, 148));//paints ground
+			g.fillRect(0, HEIGHT - 80, WIDTH, 80);
+
+			// BIRD
+			try {
+	    		img = ImageIO.read(new File("tyler.png"));
+			} 
+			catch (IOException e) {
+				
+			}
+			g.drawImage(img, bird.x, bird.y, null);
+
+			// paints pipes by calling paintPipe method
+			
+			for(int i = 0; i < pipe.size(); i++){ 
+				Rectangle pipes = pipe.get(i);
+				paintPipe(g, pipes);
+			}
 		}
 
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Monotype Corsiva", Font.PLAIN, 120)); // start and death font type and size
+
+		if(!start){
+			g.setFont(new Font("Monaco", Font.PLAIN, 60));
+			g.drawString ("Welcome to", 325, 200);
+			g.drawString("\"APCS: A Journey\"", 235	, 260);
+			g.drawString("PRESS TO START GAME", 135, 400);
+		}
 
 		if(!die){ // comment out for now 5/11/18
 			//g.drawString("PRESS TO START GAME", 100, 300);
@@ -207,13 +287,13 @@ public class flappybird implements ActionListener, KeyListener{
 			g.setColor(Color.WHITE); //death text
 			g.drawString("YOU DIED!", 18* WIDTH/100, 2* HEIGHT/5);
 			g.setFont(new Font("Monaco", Font.PLAIN, 60));
-			g.drawString("Score: " + Integer.toString(score/6), 32* WIDTH/100, 3*HEIGHT/6);
-
+			g.drawString("Score: " + Integer.toString(score/6), 32* WIDTH/100 + 50, 3*HEIGHT/6);
 		}
 
 		g.setColor(Color.WHITE);
 		g.setFont(new Font("Monaco", Font.PLAIN, 30));
-		g.drawString("Score: " + Integer.toString(score/6), 10, 30); // score/2 because the counter increases by 2 for some reason...
+		g.drawString("Score: " + Integer.toString(score/6), 10, 70); // score in top left
+		g.drawString("High Score: " + Integer.toString(highScore/6), 10, 30); // high score in top left
 
 	}
 
