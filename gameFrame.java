@@ -1,3 +1,5 @@
+//previous gameFrame class, not used in final product
+
 import java.awt.*;
 import javax.swing.*;
 
