@@ -5,6 +5,6 @@
 
 # Available Scripts
 In the project directory, you must compile and run the app by using the commands 
-`javac flappybird.java`
-`java flappybird`
+###`javac flappybird.java`
+###`java flappybird`
 
