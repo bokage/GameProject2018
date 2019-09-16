@@ -1,2 +1,4 @@
-# GameProject2018
-End of year final project for APCS 
+# Flappy Bird
+*Java port of Flappy Bird for desktop, written with Java AWS and Swing*
+
+
