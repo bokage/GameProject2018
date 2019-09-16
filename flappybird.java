@@ -22,7 +22,7 @@ public class flappybird implements ActionListener, KeyListener{
 
 	public static final int WIDTH = 1000, HEIGHT = 900, PIPESPEED = 5, PIPEGAP = 305; // edit to change window dimensions
 	// game window width, height, speed of pipes, gap between top and bottom of the pipes
-	
+
 	public static flappybird fb;
 
 	public Image img = null;
@@ -72,7 +72,7 @@ public class flappybird implements ActionListener, KeyListener{
 	public void keyPressed(KeyEvent e){ // press key to jump
 		if(e.getKeyCode()==KeyEvent.VK_SPACE){ // only spacebar works
 			if(die){ // restarts game if die
-				bird = new Rectangle(WIDTH/2 - 20, HEIGHT/2 - 20, 42, 58); 
+				bird = new Rectangle(WIDTH/2 - 20, HEIGHT/2 - 20, 42, 58);
 				pipe = new ArrayList<Rectangle>();
 
 				addPipe(true);
@@ -99,7 +99,7 @@ public class flappybird implements ActionListener, KeyListener{
 				velocity = -7;
 			}
 	    }
-		
+
 	}
 
 	public void keyReleased(KeyEvent e){ // KeyListener interface method
@@ -109,7 +109,7 @@ public class flappybird implements ActionListener, KeyListener{
 	}
 
 	public void actionPerformed(ActionEvent a){ // necessary method from ActionListener interface
-		
+
 		int pipeSpeed = PIPESPEED;
 		ticks++;
 
@@ -126,7 +126,7 @@ public class flappybird implements ActionListener, KeyListener{
 			else{
 				velocity += 0.287;
 			}
-			
+
 
 			for(int i = 0; i < pipe.size(); i++){
 				Rectangle pipes = pipe.get(i);
@@ -160,7 +160,7 @@ public class flappybird implements ActionListener, KeyListener{
 					}
 					else if (score/6 >= 100 && score/6 <= 125){
 						inverse = true;
-					}				
+					}
 					else{
 						inverse = false;
 					}
@@ -213,7 +213,7 @@ public class flappybird implements ActionListener, KeyListener{
 			g.fillRect(0, 0, WIDTH, HEIGHT);
 
 			// GRASS
-			g.setColor(Color.RED); 
+			g.setColor(Color.RED);
 			g.fillRect(0, HEIGHT-120, WIDTH, 120);
 			g.setColor(new Color(209, 148, 223));//paints ground
 			g.fillRect(0, HEIGHT - 80, WIDTH, 80);
@@ -222,7 +222,7 @@ public class flappybird implements ActionListener, KeyListener{
 			g.drawImage(img, bird.x, bird.y, null);
 
 			// paints pipes by calling paintPipe method
-			for(int i = 0; i < pipe.size(); i++){ 
+			for(int i = 0; i < pipe.size(); i++){
 				Rectangle pipes = pipe.get(i);
 				paintPipe(g, pipes);
 			}
@@ -230,9 +230,9 @@ public class flappybird implements ActionListener, KeyListener{
 			// BIRD
 			try { //KUMAR BIRD
 	    		img = ImageIO.read(new File("kumz.png"));
-			} 
+			}
 			catch (IOException e) {
-				
+
 			}
 			g.drawImage(img, bird.x, bird.y, null);
 
@@ -242,7 +242,7 @@ public class flappybird implements ActionListener, KeyListener{
 			g.fillRect(0, 0, WIDTH, HEIGHT);
 
 			// GRASS
-			g.setColor(Color.GREEN); 
+			g.setColor(Color.GREEN);
 			g.fillRect(0, HEIGHT-120, WIDTH, 120);
 			g.setColor(new Color(223, 216, 148));//paints ground
 			g.fillRect(0, HEIGHT - 80, WIDTH, 80);
@@ -250,15 +250,15 @@ public class flappybird implements ActionListener, KeyListener{
 			// BIRD
 			try {
 	    		img = ImageIO.read(new File("tyler.png"));
-			} 
+			}
 			catch (IOException e) {
-				
+
 			}
 			g.drawImage(img, bird.x, bird.y, null);
 
 			// paints pipes by calling paintPipe method
-			
-			for(int i = 0; i < pipe.size(); i++){ 
+
+			for(int i = 0; i < pipe.size(); i++){
 				Rectangle pipes = pipe.get(i);
 				paintPipe(g, pipes);
 			}
@@ -270,8 +270,9 @@ public class flappybird implements ActionListener, KeyListener{
 		if(!start){
 			g.setFont(new Font("Monaco", Font.PLAIN, 60));
 			g.drawString ("Welcome to", 325, 200);
-			g.drawString("\"APCS: A Journey\"", 235	, 260);
-			g.drawString("PRESS TO START GAME", 135, 400);
+			g.drawString("Flappy Bird!", 320, 260);
+            g.setFont(new Font("Monaco", Font.PLAIN, 30));
+			g.drawString("PRESS ANY BUTTON TO START", 255, 400);
 		}
 
 		if(!die){ // comment out for now 5/11/18
@@ -283,7 +284,7 @@ public class flappybird implements ActionListener, KeyListener{
 
 			g.setColor(new Color(223, 216, 148)); //death screen background
 			g.fillRect(18* WIDTH/100 -10, HEIGHT/5 +50, 620, 260);
-			
+
 			g.setColor(Color.WHITE); //death text
 			g.drawString("YOU DIED!", 18* WIDTH/100, 2* HEIGHT/5);
 			g.setFont(new Font("Monaco", Font.PLAIN, 60));
