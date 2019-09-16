@@ -4,7 +4,7 @@
 <img src='https://github.com/derek-ye/Flappy-Bird-PC-Edition/blob/master/screenshots/flappybird.png' width="400"/>
 
 # Available Scripts
-In the project directory, you must compile and run the app by using the commands 
-###`javac flappybird.java`
-###`java flappybird`
+In the project directory, you must compile and run the app by using the commands\n
+### `javac flappybird.java`\n
+### `java flappybird`
 
