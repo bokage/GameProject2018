@@ -13,3 +13,7 @@ In the project directory, you must compile and run the app by using the commands
 #### `javac flappybird.java`
 #### `java flappybird`
 
+# Additional Pictures
+<img src='https://github.com/derek-ye/Flappy-Bird-PC-Edition/blob/master/screenshots/gameplay.png' width="400"/>
+<img src='https://github.com/derek-ye/Flappy-Bird-PC-Edition/blob/master/screenshots/inverted.png' width="400"/>
+
